@@ -1,20 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct Node {
+typedef struct {
     float data;
     struct Node* next;
 } Node;
 
-typedef struct Stack {
+typedef struct {
     Node* top;
 } Stack;
 
 // Function to initialize the stack
-Stack* initialize() {
+Stack* initialize(void) {
     Stack* stack = (Stack*)malloc(sizeof(Stack));
     if (stack == NULL) {
-        printf("fail\n");
+        printf("Fail\n");
         exit(EXIT_FAILURE);
     }
     stack->top = NULL;
@@ -25,7 +25,7 @@ Stack* initialize() {
 void push(Stack* s, float value) {
     Node* newNode = (Node*)malloc(sizeof(Node));
     if (newNode == NULL) {
-        printf("fail\n");
+        printf("Fail\n");
         exit(EXIT_FAILURE);
     }
     newNode->data = value;
@@ -68,8 +68,36 @@ void destroyStack(Stack* s) {
     free(s);
 }
 
+//Function displaying all elements of stack
+void displaySt(Stack *s) {
+    Stack *sCoppy = initialize();
+
+    while (!isEmpty(s)) {
+        push(sCoppy, peek(s));
+        pop(s);
+    }
+
+    while (!isEmpty(sCoppy)) {
+        push(s, peek(sCoppy));
+        printf("%.0f ", peek(sCoppy));
+        pop(sCoppy);
+    }
+    printf("\n");
+
+    destroyStack(sCoppy);
+}
+
+//Filling a stack with an array
+void fillStack(Stack *s, float *arr, int size) {
+    for (size_t i = 0; i < size; i++){
+        push(s, *(arr + i));
+    }
+}
+
 int main() {
 
 
+
+    destroyStack(s);
     return 0;
 }
