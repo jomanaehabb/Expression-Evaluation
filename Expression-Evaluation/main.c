@@ -94,6 +94,12 @@ void fillStack(Stack *s, float *arr, int size) {
     }
 }
 
+
+char* infixToPostfix(char *infix) {
+
+}
+
+
 int main() {
 
 
