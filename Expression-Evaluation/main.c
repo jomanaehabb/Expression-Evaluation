@@ -1,5 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define SIZE 100
 
 typedef struct {
     float data;
@@ -96,14 +100,78 @@ void fillStack(Stack *s, float *arr, int size) {
 
 
 char* infixToPostfix(char *infix) {
+    char postfix[SIZE];
+    int i = 0;
+    Stack *s = initialize();
+    char* token = strtok(infix, " ");
+    while (token) {
+        //If the token is a number insert it in the output
+        if (isnum(token)) {
+            if (i <= SIZE - 1) {
+                *(postfix + i) = atoi(token);
+                i++;
+            }
+            else
+                printf("ERROR: Max size for expression reached!\n");
+        }
+        //If the token is ) pop all elements in stack until ( is found
+        else if (token == ')') {
+            while ((char)peek(s) != '(') {
+                *(postfix + i) = pop(s);
+                i++;
+            }
+            pop(s); //Removing the (
+        }
+        //If the token is an operator
+        else {
+            //If the stack is empty just push the token
+            if (isEmpty(s)) push(s, (char)*token);
+            else {
+                //Check the priority of the operator if higher than the top of stack
+                //push to stack
+               if (percedence((char)*token) > percedence((char)peek(s))) {
+                    push(s, (char)*token);
+               }
+               else{
+                    *(postfix + i) = pop(s);
+                    i++;
+                }
+            }
+        }
+        token = strtok(NULL, " ");
+    }
 
+    destroyStack(s);
+    return postfix;
 }
 
+int percedence(char oper) {
+    switch (oper) {
+    case '+':
+    case '-':
+        return 0;
+
+    case '*':
+    case '/':
+    case '%':
+        return 1;
+
+    case '^':
+        return 2;
+
+    case '(':
+        return 3;
+
+    default:
+        printf("ERROR: Operation not declared!\n");
+        exit(-1);
+    }
+}
 
 int main() {
 
+    char infixx[] = "1 + 2 * 4 + 3";
+    printf("%s\n", infixToPostfix(infixx));
 
-
-    destroyStack(s);
     return 0;
 }
