@@ -104,48 +104,54 @@ float pop(Stack *s) {
     }
 }
 
-// Function to evaluate a postfix expression
-float evaluatePostfix(char *postfix) {
-    Stack operand_stack;
-    initialize(&operand_stack);
+// Function to evaluate postfix expression
+float evaluatePostfix(char* postfix) {
+    Stack stack;
+    initialize(&stack);
 
-    char *ptr = postfix;
-    while (*ptr != '\0') {
-        if (isdigit(*ptr)) {
-            // If the current character is a digit, push it onto the stack
-            push(&operand_stack, (float)(*ptr - '0'));
-        } else {
-            // If the current character is an operator, pop two operands from the stack and perform the operation
-            float operand2 = pop(&operand_stack);
-            float operand1 = pop(&operand_stack);
-            switch (*ptr) {
+    int i;
+    float operand1, operand2;
+    float result;
+    char ch;
+
+    for (i = 0; postfix[i] != '\0'; i++) {
+        ch = postfix[i];
+        if (isdigit(ch)) {
+            push(&stack, ch - '0');
+        } else if (ch == '.') {
+            float decimal = 0.1;
+            float num = pop(&stack);
+            while (isdigit(postfix[++i])) {
+                num += (postfix[i] - '0') * decimal;
+                decimal /= 10.0;
+            }
+            push(&stack, num);
+        } else if (ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '^') {
+            operand2 = pop(&stack);
+            operand1 = pop(&stack);
+            switch(ch) {
                 case '+':
-                    push(&operand_stack, operand1 + operand2);
+                    push(&stack, operand1 + operand2);
                     break;
                 case '-':
-                    push(&operand_stack, operand1 - operand2);
+                    push(&stack, operand1 - operand2);
                     break;
                 case '*':
-                    push(&operand_stack, operand1 * operand2);
+                    push(&stack, operand1 * operand2);
                     break;
                 case '/':
-                    if (operand2 == 0) {
-                        printf("Division by zero error\n");
-                        exit(EXIT_FAILURE);
-                    }
-                    push(&operand_stack, operand1 / operand2);
+                    push(&stack, operand1 / operand2);
                     break;
-                default:
-                    printf("Invalid operator\n");
-                    exit(EXIT_FAILURE);
+                case '^':
+                    push(&stack, pow(operand1, operand2));
+                    break;
             }
         }
-        ptr++;
     }
-
-    // The result should be the only item left in the stack
-    return pop(&operand_stack);
+    result = pop(&stack);
+    return result;
 }
+
 
 int main() {
 
