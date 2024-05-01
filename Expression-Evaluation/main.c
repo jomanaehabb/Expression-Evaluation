@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+#include <math.h>
 
 typedef struct {
     float data;
@@ -94,16 +97,6 @@ void fillStack(Stack *s, float *arr, int size) {
     }
 }
 
-// Function to pop an item from the stack
-float pop(Stack *s) {
-    if (s->top == -1) {
-        printf("Stack Underflow\n");
-        exit(EXIT_FAILURE);
-    } else {
-        return s->items[(s->top)--];
-    }
-}
-
 // Function to evaluate postfix expression
 float evaluatePostfix(char* postfix) {
     Stack stack;
@@ -151,7 +144,6 @@ float evaluatePostfix(char* postfix) {
     result = pop(&stack);
     return result;
 }
-
 
 int main() {
 
