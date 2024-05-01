@@ -94,6 +94,59 @@ void fillStack(Stack *s, float *arr, int size) {
     }
 }
 
+// Function to pop an item from the stack
+float pop(Stack *s) {
+    if (s->top == -1) {
+        printf("Stack Underflow\n");
+        exit(EXIT_FAILURE);
+    } else {
+        return s->items[(s->top)--];
+    }
+}
+
+// Function to evaluate a postfix expression
+float evaluatePostfix(char *postfix) {
+    Stack operand_stack;
+    initialize(&operand_stack);
+
+    char *ptr = postfix;
+    while (*ptr != '\0') {
+        if (isdigit(*ptr)) {
+            // If the current character is a digit, push it onto the stack
+            push(&operand_stack, (float)(*ptr - '0'));
+        } else {
+            // If the current character is an operator, pop two operands from the stack and perform the operation
+            float operand2 = pop(&operand_stack);
+            float operand1 = pop(&operand_stack);
+            switch (*ptr) {
+                case '+':
+                    push(&operand_stack, operand1 + operand2);
+                    break;
+                case '-':
+                    push(&operand_stack, operand1 - operand2);
+                    break;
+                case '*':
+                    push(&operand_stack, operand1 * operand2);
+                    break;
+                case '/':
+                    if (operand2 == 0) {
+                        printf("Division by zero error\n");
+                        exit(EXIT_FAILURE);
+                    }
+                    push(&operand_stack, operand1 / operand2);
+                    break;
+                default:
+                    printf("Invalid operator\n");
+                    exit(EXIT_FAILURE);
+            }
+        }
+        ptr++;
+    }
+
+    // The result should be the only item left in the stack
+    return pop(&operand_stack);
+}
+
 int main() {
 
 
