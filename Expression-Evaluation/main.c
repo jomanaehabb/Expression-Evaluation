@@ -99,8 +99,8 @@ void fillStack(Stack *s, float *arr, int size) {
 
 // Function to evaluate postfix expression
 float evaluatePostfix(char* postfix) {
-    Stack stack;
-    initialize(&stack);
+    Stack *stack = initialize();
+
 
     int i;
     float operand1, operand2;
@@ -148,7 +148,5 @@ float evaluatePostfix(char* postfix) {
 int main() {
 
 
-
-    destroyStack(s);
     return 0;
 }
