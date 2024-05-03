@@ -83,7 +83,7 @@ void displaySt(Stack *s) {
 
     while (!isEmpty(sCoppy)) {
         push(s, peek(sCoppy));
-        printf("%.0f ", peek(sCoppy));
+        printf("%c ", (char)peek(sCoppy));
         pop(sCoppy);
     }
     printf("\n");
@@ -98,54 +98,7 @@ void fillStack(Stack *s, float *arr, int size) {
     }
 }
 
-
-char* infixToPostfix(char *infix) {
-    char postfix[SIZE];
-    int i = 0;
-    Stack *s = initialize();
-    char* token = strtok(infix, " ");
-    while (token) {
-        //If the token is a number insert it in the output
-        if (isnum(token)) {
-            if (i <= SIZE - 1) {
-                *(postfix + i) = atoi(token);
-                i++;
-            }
-            else
-                printf("ERROR: Max size for expression reached!\n");
-        }
-        //If the token is ) pop all elements in stack until ( is found
-        else if (token == ')') {
-            while ((char)peek(s) != '(') {
-                *(postfix + i) = pop(s);
-                i++;
-            }
-            pop(s); //Removing the (
-        }
-        //If the token is an operator
-        else {
-            //If the stack is empty just push the token
-            if (isEmpty(s)) push(s, (char)*token);
-            else {
-                //Check the priority of the operator if higher than the top of stack
-                //push to stack
-               if (percedence((char)*token) > percedence((char)peek(s))) {
-                    push(s, (char)*token);
-               }
-               else{
-                    *(postfix + i) = pop(s);
-                    i++;
-                }
-            }
-        }
-        token = strtok(NULL, " ");
-    }
-
-    destroyStack(s);
-    return postfix;
-}
-
-int percedence(char oper) {
+int precedence(char oper) {
     switch (oper) {
     case '+':
     case '-':
@@ -168,10 +121,64 @@ int percedence(char oper) {
     }
 }
 
+char* infixToPostfix(char *infix) {
+    char* postfix = malloc(strlen(infix) + 1);
+    postfix[0] = 0; //Cleaning garbage values
+    char* temp[2] = {'0', '\0'}; //Used to append the operator as string to the postfix string
+    Stack *s = initialize();
+    char* token = strtok(infix, " ");
+    while (token) {
+        //If the token is a number insert it in the output
+        if (isdigit(token[0])) {
+                strcat(postfix, token);
+                strcat(postfix, " ");
+        }
+
+        //If the token is ) pop all elements in stack until ( is found
+        else if (token[0] == ')') {
+            while ((char)peek(s) != '(' && !isEmpty(s)) {
+                temp[0] = (char)pop(s);
+                strcat(postfix, temp);
+                strcat(postfix, " ");
+            }
+            pop(s); //Removing the (
+        }
+
+        //If the stack is empty just push the token
+        else if (isEmpty(s)) {
+                push(s, token[0]);
+        }
+
+        //If the token is an operator
+        else {
+            //Check the priority of the operator if higher than the top of stack
+            //push to stack
+            while (!isEmpty(s) && precedence(token[0]) <= precedence((char)peek(s)) && (char)peek(s) != '(') {
+                temp[0] = (char)pop(s);
+                strcat(postfix, temp);
+                strcat(postfix, " ");
+               }
+            push(s, token[0]);
+            }
+        token = strtok(NULL, " ");
+    }
+
+    while (!isEmpty(s)) {
+        temp[0] = (char)pop(s);
+        strcat(postfix, temp);
+        strcat(postfix, " ");
+    }
+
+    destroyStack(s);
+    return postfix;
+}
+
+
 int main() {
 
-    char infixx[] = "1 + 2 * 4 + 3";
+    char infixx[] = "2 + ( -2.5 + 3.14 ) * ( -5.4 + 8.1 ) ^ ( -0.5)";
     printf("%s\n", infixToPostfix(infixx));
 
     return 0;
 }
+

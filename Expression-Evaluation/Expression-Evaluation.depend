@@ -3,7 +3,9 @@
 	<stdio.h>
 	<stdlib.h>
 
-1714512740 source:d:\software\expression-evaluation\expression-evaluation\main.c
+1714520479 source:d:\software\expression-evaluation\expression-evaluation\main.c
 	<stdio.h>
 	<stdlib.h>
+	<string.h>
+	<ctype.h>
 
