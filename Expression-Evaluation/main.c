@@ -129,7 +129,7 @@ char* infixToPostfix(char *infix) {
     char* token = strtok(infix, " ");
     while (token) {
         //If the token is a number insert it in the output
-        if (isdigit(token[0])) {
+        if (isdigit(token[0]) || (token[0] == '-' && isdigit(token[1]))) {
                 strcat(postfix, token);
                 strcat(postfix, " ");
         }
@@ -176,7 +176,7 @@ char* infixToPostfix(char *infix) {
 
 int main() {
 
-    char infixx[] = "2 + ( -2.5 + 3.14 ) * ( -5.4 + 8.1 ) ^ ( -0.5)";
+    char infixx[] = "2 + ( -2.5 + 3.14 ) * ( -5.4 + 8.1 ) ^ ( -0.5 )";
     printf("%s\n", infixToPostfix(infixx));
 
     return 0;
