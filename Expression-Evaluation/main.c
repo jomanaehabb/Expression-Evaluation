@@ -101,47 +101,58 @@ void fillStack(Stack *s, float *arr, int size) {
 float evaluatePostfix(char* postfix) {
     Stack *stack = initialize();
 
-
-    int i;
-    float operand1, operand2;
-    float result;
+    int i = 0;
+    float result = 0;
     char ch;
 
-    for (i = 0; postfix[i] != '\0'; i++) {
-        ch = postfix[i];
-        if (isdigit(ch)) {
-            push(&stack, ch - '0');
-        } else if (ch == '.') {
-            float decimal = 0.1;
-            float num = pop(&stack);
-            while (isdigit(postfix[++i])) {
-                num += (postfix[i] - '0') * decimal;
-                decimal /= 10.0;
+    while ((ch = postfix[i++]) != '\0') {
+        if (isdigit(ch) || (ch == '-' && isdigit(postfix[i]))) {
+            // Read full number
+            float num = 0;
+            int sign = 1;
+            if (ch == '-') {
+                sign = -1;
+                ch = postfix[i++];
             }
-            push(&stack, num);
+            while (isdigit(ch) || ch == '.') {
+                if (ch != '.') {
+                    num = num * 10 + (ch - '0');
+                } else {
+                    float decimal = 0.1;
+                    while (isdigit(postfix[i])) {
+                        num += (postfix[i] - '0') * decimal;
+                        decimal /= 10.0;
+                        i++;
+                    }
+                }
+                ch = postfix[i++];
+            }
+            push(stack, sign * num);
+            i--; // Adjust for the extra increment
         } else if (ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '^') {
-            operand2 = pop(&stack);
-            operand1 = pop(&stack);
+            float operand2 = pop(stack);
+            float operand1 = pop(stack);
             switch(ch) {
                 case '+':
-                    push(&stack, operand1 + operand2);
+                    push(stack, operand1 + operand2);
                     break;
                 case '-':
-                    push(&stack, operand1 - operand2);
+                    push(stack, operand1 - operand2);
                     break;
                 case '*':
-                    push(&stack, operand1 * operand2);
+                    push(stack, operand1 * operand2);
                     break;
                 case '/':
-                    push(&stack, operand1 / operand2);
+                    push(stack, operand1 / operand2);
                     break;
                 case '^':
-                    push(&stack, pow(operand1, operand2));
+                    push(stack, pow(operand1, operand2));
                     break;
             }
         }
     }
-    result = pop(&stack);
+    result = pop(stack);
+    destroyStack(stack);
     return result;
 }
 
