@@ -236,11 +236,10 @@ float evaluatePostfix(char* postfix) {
 int main() {
 
     char infix[] = "2 + ( -2.5 + 3.14 ) * ( -5.4 + 8.1 ) ^ ( -0.5 )";
-
+    printf("Infix expression: %s\n", infix);
 
     char* postfix = infixToPostfix(infix);
     printf("Postfix expression: %s\n", postfix);
-
 
     float result = evaluatePostfix(postfix);
     printf("Result of evaluation: %f\n", result);
