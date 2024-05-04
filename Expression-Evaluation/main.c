@@ -233,12 +233,13 @@ float evaluatePostfix(char* postfix) {
 }
 
 int checkExp(char* infix) {
-    int i = 0, dotCount = 0, flag = 0;
+    int i = 0, dotCount = 0, flag = 0, flag2 = 0;
     char* token = strtok(infix, " ");
 
     while (token) {
-        //Digit found (Number with character no space, two successive numbers no operator, more than one dot)
+        //Digit found
         if (isdigit(token[0]) || (token[0] == '-' && isdigit(token[1]))) {
+            //Two successive numbers no operator
             if (flag != 0 && flag != -1) {
                 printf("\nERROR: Two successive numbers with no operator!\n");
                 return 0;
@@ -246,22 +247,52 @@ int checkExp(char* infix) {
 
             flag = 1;
             dotCount = 0;
-            for (i = 0; token[i] != '\0'; i++) {
+            for (i = 1; token[i] != '\0'; i++) {
                 if (token[i] == '.') dotCount++;
+                //Number with character no space
                 else if (!isdigit(token[i])) {
                     printf("\nERROR: No spaces between operand and operator!\n");
                     return 0;
                 }
             }
-
+            //More than one dot
             if (dotCount > 1) {
                 printf("\nERROR: More than one dot found in a number!\n");
                 return 0;
             }
         }
+
         else {
             //Operator found
-            flag = -1;
+            //two successive operators with not operand
+            if (flag != 1 && flag != 0) {
+                printf("\nERROR: Two successive operators with no operand!\n");
+                return 0;
+            }
+            if (token[0] == ')' || token[0] == '(') flag = 1;
+            else flag = -1;
+
+            //Not defined operator
+            if (token[0] != '+' && token[0] != '-' && token[0] != '*' && token[0] != '/' &&
+                token[0] != '%' && token[0] != '^' && token[0] != ' ' && token[0] != '\0' &&
+                token[0] != '(' && token[0] != ')') {
+                printf("\nERROR: Unknown operator entered (ONLY + - * / % ^ are allowed)!\n");
+                return 0;
+                }
+
+            else if (strlen(token) > 1){ //Each operator should always be of length 1
+                //operator with operand no space
+                if (isdigit(token[1])) {
+                    printf("\nERROR: No spaces between operator and operand!\n");
+                    return 0;
+                }
+
+                //Two operators with no space
+                else {
+                    printf("\nERROR: Two successive operators with no space!\n");
+                    return 0;
+                }
+            }
         }
         token = strtok(NULL, " ");
     }
@@ -280,9 +311,26 @@ int main() {
     float result = evaluatePostfix(postfix);
     printf("Result of evaluation: %f\n", result);*/
 
-    char arr[] = "2.0 - 1.1 + 3 - 4..0";
+    char arr[] = "2 - ( 1 ^ 3 ) + 4";
     printf("%d\n", checkExp(arr));
 
     return 0;
 }
 
+/*
+else if (token[0] == ')') {
+            if (flag2 != 1 || flag2 != 0) {
+                printf("\nERROR: ) with no ( found!\n");
+                return 0;
+            }
+            flag = -1;
+        }
+
+        else if (token[0] == '(') {
+            if (flag2 != -1 || flag2 != 0) {
+                printf("\nERROR: ( with no ) found!\n");
+                return 0;
+            }
+            flag = 1;
+        }
+*/
