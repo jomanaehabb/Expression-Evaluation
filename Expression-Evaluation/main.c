@@ -174,10 +174,78 @@ char* infixToPostfix(char *infix) {
 }
 
 
+float evaluatePostfix(char* postfix) {
+    Stack *stack = initialize();
+
+    int i = 0;
+    float result = 0;
+    char ch;
+
+    while ((ch = postfix[i++]) != '\0') {
+        if (isdigit(ch) || (ch == '-' && isdigit(postfix[i]))) {
+            // Read full number
+            float num = 0;
+            int sign = 1;
+            if (ch == '-') {
+                sign = -1;
+                ch = postfix[i++];
+            }
+            while (isdigit(ch) || ch == '.') {
+                if (ch != '.') {
+                    num = num * 10 + (ch - '0');
+                } else {
+                    float decimal = 0.1;
+                    while (isdigit(postfix[i])) {
+                        num += (postfix[i] - '0') * decimal;
+                        decimal /= 10.0;
+                        i++;
+                    }
+                }
+                ch = postfix[i++];
+            }
+            push(stack, sign * num);
+            i--; // Adjust for the extra increment
+        } else if (ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '^') {
+            float operand2 = pop(stack);
+            float operand1 = pop(stack);
+            switch(ch) {
+                case '+':
+                    push(stack, operand1 + operand2);
+                    break;
+                case '-':
+                    push(stack, operand1 - operand2);
+                    break;
+                case '*':
+                    push(stack, operand1 * operand2);
+                    break;
+                case '/':
+                    push(stack, operand1 / operand2);
+                    break;
+                case '^':
+                    push(stack, pow(operand1, operand2));
+                    break;
+            }
+        }
+    }
+    result = pop(stack);
+    destroyStack(stack);
+    return result;
+}
+
+
 int main() {
 
-    char infixx[] = "2 + ( -2.5 + 3.14 ) * ( -5.4 + 8.1 ) ^ ( -0.5 )";
-    printf("%s\n", infixToPostfix(infixx));
+    char infix[] = "2 + ( -2.5 + 3.14 ) * ( -5.4 + 8.1 ) ^ ( -0.5 )";
+
+
+    char* postfix = infixToPostfix(infix);
+    printf("Postfix expression: %s\n", postfix);
+
+
+    float result = evaluatePostfix(postfix);
+    printf("Result of evaluation: %f\n", result);
+
+    free(postfix);
 
     return 0;
 }

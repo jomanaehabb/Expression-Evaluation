@@ -1,7 +1,10 @@
 # depslib dependency file v1.0
-1714503017 source:e:\uni\term 6\data structure\ex-ev\expression-evaluation\expression-evaluation\main.c
+1714713945 source:e:\uni\term 6\data structure\ex-ev\expression-evaluation\expression-evaluation\main.c
 	<stdio.h>
 	<stdlib.h>
+	<ctype.h>
+	<string.h>
+	<math.h>
 
 1714520479 source:d:\software\expression-evaluation\expression-evaluation\main.c
 	<stdio.h>
