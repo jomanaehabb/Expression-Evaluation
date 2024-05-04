@@ -126,6 +126,7 @@ char* infixToPostfix(char *infix) {
     postfix[0] = 0; //Cleaning garbage values
     char* temp[2] = {'0', '\0'}; //Used to append the operator as string to the postfix string
     Stack *s = initialize();
+
     char* token = strtok(infix, " ");
     while (token) {
         //If the token is a number insert it in the output
@@ -172,7 +173,6 @@ char* infixToPostfix(char *infix) {
     destroyStack(s);
     return postfix;
 }
-
 
 float evaluatePostfix(char* postfix) {
     Stack *stack = initialize();
@@ -232,19 +232,56 @@ float evaluatePostfix(char* postfix) {
     return result;
 }
 
+int checkExp(char* infix) {
+    int i = 0, dotCount = 0, flag = 0;
+    char* token = strtok(infix, " ");
+
+    while (token) {
+        //Digit found (Number with character no space, two successive numbers no operator, more than one dot)
+        if (isdigit(token[0]) || (token[0] == '-' && isdigit(token[1]))) {
+            if (flag != 0 && flag != -1) {
+                printf("\nERROR: Two successive numbers with no operator!\n");
+                return 0;
+            }
+
+            flag = 1;
+            dotCount = 0;
+            for (i = 0; token[i] != '\0'; i++) {
+                if (token[i] == '.') dotCount++;
+                else if (!isdigit(token[i])) {
+                    printf("\nERROR: No spaces between operand and operator!\n");
+                    return 0;
+                }
+            }
+
+            if (dotCount > 1) {
+                printf("\nERROR: More than one dot found in a number!\n");
+                return 0;
+            }
+        }
+        else {
+            //Operator found
+            flag = -1;
+        }
+        token = strtok(NULL, " ");
+    }
+
+    return 1;
+}
 
 int main() {
 
-    char infix[] = "2 + ( -2.5 + 3.14 ) * ( -5.4 + 8.1 ) ^ ( -0.5 )";
+    /*char infix[] = "2 + ( -2.5 + 3.14 ) * ( -5.4 + 8.1 ) ^ ( -0.5 )";
     printf("Infix expression: %s\n", infix);
 
     char* postfix = infixToPostfix(infix);
     printf("Postfix expression: %s\n", postfix);
 
     float result = evaluatePostfix(postfix);
-    printf("Result of evaluation: %f\n", result);
+    printf("Result of evaluation: %f\n", result);*/
 
-    free(postfix);
+    char arr[] = "2.0 - 1.1 + 3 - 4..0";
+    printf("%d\n", checkExp(arr));
 
     return 0;
 }
