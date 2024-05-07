@@ -121,9 +121,11 @@ int precedence(char oper) {
     }
 }
 
-int checkExp(char* infix) {
+int checkExp(char* infixOrg) {
     int i = 0, dotCount = 0, flag = 0, flag2 = 0;
+    char infix[100];
     char* token = strtok(infix, " ");
+    strcpy(infix, infixOrg);
 
     while (token) {
         //Digit found
@@ -320,7 +322,6 @@ int main() {
         printf("Enter another expression? (Y/N): ");
         scanf("%c", &option);
         getchar();
-        free(postfix);
     } while (option == 'Y' || option == 'y');
 
     return 0;
